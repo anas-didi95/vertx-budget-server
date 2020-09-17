@@ -5,6 +5,9 @@ services:
     build:
       context: .devcontainer
       dockerfile: Dockerfile
+    ports:
+      - 5000:5000
     command: sleep infinity
     volumes:
       - ./:/workspace
+      - ./m2-docker:/home/vscode/.m2

@@ -1,0 +1,8 @@
+@host = localhost
+@port = 5000
+@hostname={{host}}:{{port}}
+
+// @name hello
+GET http://{{hostname}}/
+Accept: application/json
+Content-Type: application/json
