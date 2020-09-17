@@ -5,6 +5,9 @@ services:
     build:
       context: .devcontainer
       dockerfile: Dockerfile
+    environment:
+      APP_PORT: ${APP_PORT?:APP_PORT}
+      APP_HOST: ${APP_HOST?:APP_HOST}
     ports:
       - 5000:5000
     command: sleep infinity
