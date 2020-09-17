@@ -1,5 +1,7 @@
 package com.anasdidi.budget;
 
+import com.anasdidi.budget.common.AppConfig;
+
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.Promise;
@@ -16,13 +18,15 @@ public class MainVerticle extends AbstractVerticle {
         new ConfigRetrieverOptions().addStore(new ConfigStoreOptions().setType("env")));
 
     configRetriever.rxGetConfig().subscribe(cfg -> {
+      AppConfig appConfig = AppConfig.create(cfg);
+
       Router router = Router.router(vertx);
       router.get("/").handler(routingContext -> {
         routingContext.response().setStatusCode(200).putHeader("Content-Type", "application/json")
             .end(new JsonObject().put("data", "Hello world").encode());
       });
 
-      vertx.createHttpServer().requestHandler(router).rxListen(cfg.getInteger("APP_PORT"), cfg.getString("APP_HOST"))
+      vertx.createHttpServer().requestHandler(router).rxListen(appConfig.getAppPort(), appConfig.getAppHost())
           .subscribe(r -> startPromise.complete(), e -> startPromise.fail(e));
     }, e -> startPromise.fail(e));
   }
