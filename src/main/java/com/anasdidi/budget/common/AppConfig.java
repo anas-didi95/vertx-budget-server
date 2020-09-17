@@ -24,6 +24,14 @@ public class AppConfig {
     this.cfg = cfg;
   }
 
+  @Override
+  public String toString() {
+    return new JsonObject()//
+        .put("APP_PORT", getAppPort())//
+        .put("APP_HOST", getAppHost())//
+        .encodePrettily();
+  }
+
   public Integer getAppPort() {
     return cfg.getInteger("APP_PORT");
   }

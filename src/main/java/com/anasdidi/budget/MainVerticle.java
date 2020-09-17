@@ -19,6 +19,7 @@ public class MainVerticle extends AbstractVerticle {
 
     configRetriever.rxGetConfig().subscribe(cfg -> {
       AppConfig appConfig = AppConfig.create(cfg);
+      System.out.println("appConfig\n" + appConfig.toString());
 
       Router router = Router.router(vertx);
       router.get("/").handler(routingContext -> {
