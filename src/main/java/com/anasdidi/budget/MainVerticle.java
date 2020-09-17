@@ -1,23 +1,29 @@
 package com.anasdidi.budget;
 
-import io.vertx.core.AbstractVerticle;
+import io.vertx.config.ConfigRetrieverOptions;
+import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.Promise;
+import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.config.ConfigRetriever;
+import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.ext.web.Router;
 
 public class MainVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
-    vertx.createHttpServer().requestHandler(req -> {
-      req.response()
-        .putHeader("content-type", "text/plain")
-        .end("Hello from Vert.x!");
-    }).listen(5000, "0.0.0.0", http -> {
-      if (http.succeeded()) {
-        startPromise.complete();
-        System.out.println("HTTP server started on port 8888");
-      } else {
-        startPromise.fail(http.cause());
-      }
-    });
+    ConfigRetriever configRetriever = ConfigRetriever.create(vertx,
+        new ConfigRetrieverOptions().addStore(new ConfigStoreOptions().setType("env")));
+
+    configRetriever.rxGetConfig().subscribe(cfg -> {
+      Router router = Router.router(vertx);
+      router.get("/").handler(routingContext -> {
+        routingContext.response().setStatusCode(200).putHeader("Content-Type", "application/json")
+            .end(new JsonObject().put("data", "Hello world").encode());
+      });
+
+      vertx.createHttpServer().requestHandler(router).rxListen(cfg.getInteger("APP_PORT"), cfg.getString("APP_HOST"))
+          .subscribe(r -> startPromise.complete(), e -> startPromise.fail(e));
+    }, e -> startPromise.fail(e));
   }
 }
