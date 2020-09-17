@@ -10,3 +10,4 @@ services:
     command: sleep infinity
     volumes:
       - ./:/workspace
+      - ./m2-docker:/home/vscode/.m2
