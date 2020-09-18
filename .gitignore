@@ -1,6 +1,7 @@
 .env
 m2-docker/
 log/
+mongodump/
 
 ### Vert.x ###
 .vertx/
