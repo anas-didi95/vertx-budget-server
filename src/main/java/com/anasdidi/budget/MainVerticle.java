@@ -10,8 +10,10 @@ import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.Promise;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Log4j2LogDelegateFactory;
+import io.vertx.ext.healthchecks.Status;
 import io.vertx.reactivex.config.ConfigRetriever;
 import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.ext.healthchecks.HealthCheckHandler;
 import io.vertx.reactivex.ext.web.Router;
 
 public class MainVerticle extends AbstractVerticle {
@@ -30,17 +32,31 @@ public class MainVerticle extends AbstractVerticle {
 
     configRetriever.rxGetConfig().subscribe(cfg -> {
       AppConfig appConfig = AppConfig.create(cfg);
-      logger.info("appConfig\n{}", appConfig.toString());
+      logger.info("[start] appConfig\n{}", appConfig.toString());
 
       Router router = Router.router(vertx);
+      router.get("/ping").handler(setupHealthCheck());
       router.get("/").handler(routingContext -> {
         routingContext.response().setStatusCode(200).putHeader("Content-Type", "application/json")
             .end(new JsonObject().put("data", "Hello world").encode());
       });
 
-      vertx.createHttpServer().requestHandler(router)
-          .rxListen(appConfig.getAppPort(), appConfig.getAppHost())
-          .subscribe(r -> startPromise.complete(), e -> startPromise.fail(e));
+      int port = appConfig.getAppPort();
+      String host = appConfig.getAppHost();
+      Router contextPath = Router.router(vertx).mountSubRouter("/budget", router);
+      vertx.createHttpServer().requestHandler(contextPath).rxListen(port, host).subscribe(r -> {
+        logger.info("[start] HTTP server started on {}:{}", host, port);
+        startPromise.complete();
+      }, e -> startPromise.fail(e));
     }, e -> startPromise.fail(e));
+  }
+
+  private HealthCheckHandler setupHealthCheck() {
+    HealthCheckHandler handler = HealthCheckHandler.create(vertx);
+
+    handler.register("ping", promise -> promise.complete(
+        Status.OK(new JsonObject().put("currentTimeMillis", System.currentTimeMillis()))));
+
+    return handler;
   }
 }
