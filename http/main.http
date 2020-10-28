@@ -1,8 +1,6 @@
-@host = localhost
-@port = 5000
-@hostname={{host}}:{{port}}
+@baseUri=http://{{$processEnv APP_HOST}}:{{$processEnv APP_PORT}}/budget
 
-// @name hello
-GET http://{{hostname}}/
+// @name ping
+GET {{baseUri}}/ping
 Accept: application/json
 Content-Type: application/json
