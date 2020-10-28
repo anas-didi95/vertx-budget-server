@@ -19,7 +19,8 @@ public class MainVerticle extends AbstractVerticle {
   private static final Logger logger = LogManager.getLogger(MainVerticle.class);
 
   public MainVerticle() {
-    System.setProperty("vertx.logger-delegate-factory-class-name", Log4j2LogDelegateFactory.class.getName());
+    System.setProperty("vertx.logger-delegate-factory-class-name",
+        Log4j2LogDelegateFactory.class.getName());
   }
 
   @Override
@@ -37,7 +38,8 @@ public class MainVerticle extends AbstractVerticle {
             .end(new JsonObject().put("data", "Hello world").encode());
       });
 
-      vertx.createHttpServer().requestHandler(router).rxListen(appConfig.getAppPort(), appConfig.getAppHost())
+      vertx.createHttpServer().requestHandler(router)
+          .rxListen(appConfig.getAppPort(), appConfig.getAppHost())
           .subscribe(r -> startPromise.complete(), e -> startPromise.fail(e));
     }, e -> startPromise.fail(e));
   }
