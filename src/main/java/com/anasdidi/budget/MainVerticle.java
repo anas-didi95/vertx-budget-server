@@ -1,7 +1,7 @@
 package com.anasdidi.budget;
 
 import com.anasdidi.budget.common.AppConfig;
-
+import com.anasdidi.budget.common.AppUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,6 +19,7 @@ import io.vertx.reactivex.ext.web.Router;
 public class MainVerticle extends AbstractVerticle {
 
   private static final Logger logger = LogManager.getLogger(MainVerticle.class);
+  private static final long serverStartTime = System.currentTimeMillis();
 
   public MainVerticle() {
     System.setProperty("vertx.logger-delegate-factory-class-name",
@@ -54,8 +55,11 @@ public class MainVerticle extends AbstractVerticle {
   private HealthCheckHandler setupHealthCheck() {
     HealthCheckHandler handler = HealthCheckHandler.create(vertx);
 
-    handler.register("ping", promise -> promise.complete(
-        Status.OK(new JsonObject().put("currentTimeMillis", System.currentTimeMillis()))));
+    handler.register("uptime", promise -> {
+      long uptime = System.currentTimeMillis() - serverStartTime;
+      promise.complete(Status.OK(new JsonObject().put("startTime", serverStartTime)
+          .put("uptime", uptime).put("formatted", AppUtils.getFormattedMillis(uptime))));
+    });
 
     return handler;
   }
