@@ -37,6 +37,6 @@ public class AppConfig {
   }
 
   public String getAppHost() {
-    return cfg.getString("APP_HOST");
+    return cfg.getString("APP_HOST", "localhost");
   }
 }
