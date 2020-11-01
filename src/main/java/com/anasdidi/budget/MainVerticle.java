@@ -1,5 +1,6 @@
 package com.anasdidi.budget;
 
+import java.util.UUID;
 import com.anasdidi.budget.api.expense.ExpenseVerticle;
 import com.anasdidi.budget.common.AppConfig;
 import com.anasdidi.budget.common.AppUtils;
@@ -16,6 +17,7 @@ import io.vertx.reactivex.config.ConfigRetriever;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.ext.healthchecks.HealthCheckHandler;
 import io.vertx.reactivex.ext.web.Router;
+import io.vertx.reactivex.ext.web.handler.BodyHandler;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -37,11 +39,10 @@ public class MainVerticle extends AbstractVerticle {
       logger.info("[start] appConfig\n{}", appConfig.toString());
 
       Router router = Router.router(vertx);
+      router.route().handler(setupBodyHandler());
+      router.route().handler(routingContext -> routingContext
+          .put("requestId", UUID.randomUUID().toString().replace("-", "").toUpperCase()).next());
       router.get("/ping").handler(setupHealthCheck());
-      router.get("/").handler(routingContext -> {
-        routingContext.response().setStatusCode(200).putHeader("Content-Type", "application/json")
-            .end(new JsonObject().put("data", "Hello world").encode());
-      });
 
       vertx.deployVerticle(new ExpenseVerticle(router));
 
@@ -53,6 +54,11 @@ public class MainVerticle extends AbstractVerticle {
         startPromise.complete();
       }, e -> startPromise.fail(e));
     }, e -> startPromise.fail(e));
+  }
+
+  private BodyHandler setupBodyHandler() {
+    BodyHandler bodyHandler = BodyHandler.create();
+    return bodyHandler;
   }
 
   private HealthCheckHandler setupHealthCheck() {

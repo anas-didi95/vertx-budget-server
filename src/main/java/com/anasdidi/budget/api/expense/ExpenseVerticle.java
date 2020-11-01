@@ -21,8 +21,12 @@ public class ExpenseVerticle extends AbstractVerticle {
     Router router = Router.router(vertx);
 
     router.post("/").handler(routingContext -> {
-      JsonObject responseBody = new JsonObject().put("status",
-          new JsonObject().put("isSuccess", true).put("message", "Record successfully created."));
+      String requestId = routingContext.get("requestId");
+      JsonObject responseBody = new JsonObject()
+          .put("status",
+              new JsonObject().put("isSuccess", true).put("message",
+                  "Record successfully created."))
+          .put("data", new JsonObject().put("requestId", requestId));
 
       routingContext.response().setStatusCode(201).end(responseBody.encode());
     });
