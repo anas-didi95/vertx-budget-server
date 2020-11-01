@@ -28,7 +28,8 @@ public class ExpenseVerticle extends AbstractVerticle {
                   "Record successfully created."))
           .put("data", new JsonObject().put("requestId", requestId));
 
-      routingContext.response().setStatusCode(201).end(responseBody.encode());
+      routingContext.response().putHeader("Content-Type", "application/json").setStatusCode(201)
+          .end(responseBody.encode());
     });
 
     mainRouter.mountSubRouter("/api/expense", router);
