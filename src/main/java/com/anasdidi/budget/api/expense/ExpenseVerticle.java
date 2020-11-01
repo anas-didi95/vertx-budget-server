@@ -3,6 +3,7 @@ package com.anasdidi.budget.api.expense;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.vertx.core.Promise;
+import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.ext.web.Router;
 
@@ -20,7 +21,10 @@ public class ExpenseVerticle extends AbstractVerticle {
     Router router = Router.router(vertx);
 
     router.post("/").handler(routingContext -> {
-      routingContext.response().setStatusCode(201).end();
+      JsonObject responseBody = new JsonObject().put("status",
+          new JsonObject().put("isSuccess", true).put("message", "Record successfully created."));
+
+      routingContext.response().setStatusCode(201).end(responseBody.encode());
     });
 
     mainRouter.mountSubRouter("/api/expense", router);
