@@ -1,5 +1,6 @@
 package com.anasdidi.budget;
 
+import com.anasdidi.budget.api.expense.ExpenseVerticle;
 import com.anasdidi.budget.common.AppConfig;
 import com.anasdidi.budget.common.AppUtils;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +42,8 @@ public class MainVerticle extends AbstractVerticle {
         routingContext.response().setStatusCode(200).putHeader("Content-Type", "application/json")
             .end(new JsonObject().put("data", "Hello world").encode());
       });
+
+      vertx.deployVerticle(new ExpenseVerticle(router));
 
       int port = appConfig.getAppPort();
       String host = appConfig.getAppHost();
