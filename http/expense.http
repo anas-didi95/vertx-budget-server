@@ -1,0 +1,4 @@
+@baseUri=http://{{$processEnv APP_HOST}}:{{$processEnv APP_PORT}}/budget
+
+// @name create
+POST {{baseUri}}/api/expense
