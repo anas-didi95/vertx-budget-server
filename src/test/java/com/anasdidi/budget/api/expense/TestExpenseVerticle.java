@@ -39,6 +39,10 @@ public class TestExpenseVerticle {
             Assertions.assertEquals(true, status.getBoolean("isSuccess"));
             Assertions.assertEquals("Record successfully created.", status.getString("message"));
 
+            JsonObject data = responseBody.getJsonObject("data");
+            Assertions.assertNotNull(data);
+            Assertions.assertNotNull(data.getString("requestId"));
+
             testContext.completeNow();
           });
         }, e -> testContext.failNow(e));
