@@ -2,3 +2,10 @@
 
 // @name create
 POST {{baseUri}}/api/expense
+Accept: application/json
+Content-Type: application/json
+
+{
+  "item": "item1",
+  "price": 1.00
+}
