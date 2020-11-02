@@ -26,8 +26,13 @@ public class TestExpenseVerticle {
     AppConfig appConfig = AppConfig.instance();
     WebClient webClient = WebClient.create(vertx);
 
-    webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), "/budget/api/expense").rxSend()
-        .subscribe(response -> {
+    long prefix = System.currentTimeMillis();
+    JsonObject expense = new JsonObject()//
+        .put("item", prefix + "item")//
+        .put("price", 0);
+
+    webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), "/budget/api/expense")
+        .rxSendJsonObject(expense).subscribe(response -> {
           testContext.verify(() -> {
             Assertions.assertEquals(201, response.statusCode());
             Assertions.assertEquals("application/json", response.getHeader("Content-Type"));
@@ -43,6 +48,7 @@ public class TestExpenseVerticle {
             JsonObject data = responseBody.getJsonObject("data");
             Assertions.assertNotNull(data);
             Assertions.assertNotNull(data.getString("requestId"));
+            Assertions.assertNotNull(data.getString("id"));
 
             testContext.completeNow();
           });
