@@ -1,5 +1,6 @@
 package com.anasdidi.budget.api.expense;
 
+import java.time.Instant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.reactivex.Single;
@@ -17,7 +18,9 @@ class ExpenseService {
 
   Single<String> create(ExpenseVO vo, String requestId) {
     final String TAG = "create";
-    JsonObject document = ExpenseVO.toDocument(vo);
+    JsonObject document = ExpenseVO.toDocument(vo)//
+        .put("createDate", Instant.now())//
+        .put("version", 0);
 
     if (logger.isDebugEnabled()) {
       logger.debug("[{}:{}] document\n{}", TAG, requestId, document.encodePrettily());
