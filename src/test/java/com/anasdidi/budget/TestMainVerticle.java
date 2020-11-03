@@ -10,6 +10,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.ext.mongo.MongoClient;
 import io.vertx.reactivex.ext.web.client.WebClient;
 
 @ExtendWith(VertxExtension.class)
@@ -33,6 +34,12 @@ public class TestMainVerticle {
     testContext.verify(() -> {
       Assertions.assertNotNull(appConfig.getAppPort());
       Assertions.assertNotNull(appConfig.getAppHost());
+      Assertions.assertNotNull(appConfig.getMongoHost());
+      Assertions.assertNotNull(appConfig.getMongoPort());
+      Assertions.assertNotNull(appConfig.getMongoUsername());
+      Assertions.assertNotNull(appConfig.getMongoPassword());
+      Assertions.assertNotNull(appConfig.getMongoAuthSource());
+      Assertions.assertNotNull(appConfig.getMongoDbName());
 
       testContext.completeNow();
     });
@@ -55,5 +62,25 @@ public class TestMainVerticle {
             testContext.completeNow();
           });
         }, e -> testContext.failNow(e));
+  }
+
+  @Test
+  void testMongoConnectionSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
+    AppConfig appConfig = AppConfig.instance();
+    MongoClient mongoClient = MongoClient.createShared(vertx, new JsonObject()//
+        .put("host", appConfig.getMongoHost())//
+        .put("port", appConfig.getMongoPort())//
+        .put("username", appConfig.getMongoUsername())//
+        .put("password", appConfig.getMongoPassword())//
+        .put("authSource", appConfig.getMongoAuthSource())//
+        .put("db_name", appConfig.getMongoDbName()));
+
+    mongoClient.rxGetCollections().subscribe(resultList -> {
+      testContext.verify(() -> {
+        Assertions.assertNotNull(resultList);
+
+        testContext.completeNow();
+      });
+    }, e -> testContext.failNow(e));
   }
 }

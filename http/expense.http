@@ -1,0 +1,11 @@
+@baseUri=http://{{$processEnv APP_HOST}}:{{$processEnv APP_PORT}}/budget
+
+// @name create
+POST {{baseUri}}/api/expense
+Accept: application/json
+Content-Type: application/json
+
+{
+  "item": "Water",
+  "price": 1.00
+}

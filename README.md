@@ -35,12 +35,18 @@ Following table is a **mandatory** environment variables used in this project.
 | Variable Name | Datatype | Description |
 | --- | --- | --- |
 | APP_PORT | Number | Server port |
+| MONGO_USERNAME | String | Mongo username |
+| MONGO_PASSWORD | String | Mongo password |
+| MONGO_HOST | String | Mongo host |
+| MONGO_PORT | Number | Mongo port |
 
 Following table is a **optional** environment variables used in this project.
 | Variable Name | Datatype | Description | Default Value |
 | --- | --- | --- | --- |
 | APP_HOST | String | Server host | localhost |
 | LOG_LEVEL | String | Log level | error |
+| MONGO_AUTH_SOURCE | String | Mongo database for user's credentials | admin |
+| MONGO_DB_NAME | String | Mongo database name | budget |
 
 ---
 
