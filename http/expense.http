@@ -6,6 +6,6 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "item": "item1",
+  "item": "Water",
   "price": 1.00
 }
