@@ -22,7 +22,7 @@ public abstract class AbstractController {
 
       routingContext.response().headers().addAll(AppConstants.HEADERS);
       routingContext.response()//
-          .setStatusCode(201)//
+          .setStatusCode(statusCode)//
           .end(responseBody.encode());
     });
   }
