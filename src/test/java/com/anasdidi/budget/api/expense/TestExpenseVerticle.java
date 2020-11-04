@@ -10,10 +10,31 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.junit5.VertxExtension;
 import io.vertx.junit5.VertxTestContext;
 import io.vertx.reactivex.core.Vertx;
+import io.vertx.reactivex.ext.mongo.MongoClient;
 import io.vertx.reactivex.ext.web.client.WebClient;
 
 @ExtendWith(VertxExtension.class)
 public class TestExpenseVerticle {
+
+  private String requestURI = "/budget/api/expense";
+
+  private JsonObject generateDocument() {
+    long prefix = System.currentTimeMillis();
+    return new JsonObject()//
+        .put("item", prefix + "item")//
+        .put("price", 0);
+  }
+
+  private MongoClient getMongoClient(Vertx vertx) throws Exception {
+    AppConfig appConfig = AppConfig.instance();
+    return MongoClient.createShared(vertx, new JsonObject()//
+        .put("host", appConfig.getMongoHost())//
+        .put("port", appConfig.getMongoPort())//
+        .put("username", appConfig.getMongoUsername())//
+        .put("password", appConfig.getMongoPassword())//
+        .put("authSource", appConfig.getMongoAuthSource())//
+        .put("db_name", appConfig.getMongoDbName()));
+  }
 
   @BeforeEach
   void deploy_verticle(Vertx vertx, VertxTestContext testContext) {
@@ -25,13 +46,9 @@ public class TestExpenseVerticle {
   void testExpenseCreateSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
     AppConfig appConfig = AppConfig.instance();
     WebClient webClient = WebClient.create(vertx);
+    JsonObject expense = generateDocument();
 
-    long prefix = System.currentTimeMillis();
-    JsonObject expense = new JsonObject()//
-        .put("item", prefix + "item")//
-        .put("price", 0);
-
-    webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), "/budget/api/expense")
+    webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), requestURI)
         .rxSendJsonObject(expense).subscribe(response -> {
           testContext.verify(() -> {
             Assertions.assertEquals(201, response.statusCode());
@@ -53,5 +70,28 @@ public class TestExpenseVerticle {
             testContext.completeNow();
           });
         }, e -> testContext.failNow(e));
+  }
+
+  @Test
+  void testExpenseUpdateSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
+    AppConfig appConfig = AppConfig.instance();
+    WebClient webClient = WebClient.create(vertx);
+    JsonObject document = generateDocument();
+    MongoClient mongoClient = getMongoClient(vertx);
+
+    mongoClient.rxInsert("expenses", document).subscribe(id -> {
+      Assertions.assertNotNull(id);
+      document.put("price", 999);
+
+      webClient.put(appConfig.getAppPort(), appConfig.getAppHost(), requestURI + "/" + id)
+          .rxSendJsonObject(document).subscribe(response -> {
+            testContext.verify(() -> {
+              Assertions.assertEquals(200, response.statusCode());
+              Assertions.assertEquals("application/json", response.getHeader("Content-Type"));
+
+              testContext.completeNow();
+            });
+          }, e -> testContext.failNow(e));
+    }, e -> testContext.failNow(e));
   }
 }
