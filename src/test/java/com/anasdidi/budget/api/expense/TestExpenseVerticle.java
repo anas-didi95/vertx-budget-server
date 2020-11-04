@@ -82,12 +82,26 @@ public class TestExpenseVerticle {
     mongoClient.rxInsert("expenses", document).subscribe(id -> {
       Assertions.assertNotNull(id);
       document.put("price", 999);
+      document.put("version", 0);
 
       webClient.put(appConfig.getAppPort(), appConfig.getAppHost(), requestURI + "/" + id)
           .rxSendJsonObject(document).subscribe(response -> {
             testContext.verify(() -> {
               Assertions.assertEquals(200, response.statusCode());
               Assertions.assertEquals("application/json", response.getHeader("Content-Type"));
+
+              JsonObject responseBody = response.bodyAsJsonObject();
+              Assertions.assertNotNull(responseBody);
+
+              JsonObject status = responseBody.getJsonObject("status");
+              Assertions.assertNotNull(status);
+              Assertions.assertEquals(true, status.getBoolean("isSuccess"));
+              Assertions.assertEquals("Record successfully updated.", status.getString("message"));
+
+              JsonObject data = responseBody.getJsonObject("data");
+              Assertions.assertNotNull(data);
+              Assertions.assertNotNull(data.getString("requestId"));
+              Assertions.assertNotNull(data.getString("id"));
 
               testContext.completeNow();
             });
