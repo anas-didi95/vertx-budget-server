@@ -9,3 +9,16 @@ Content-Type: application/json
   "item": "Water",
   "price": 1.00
 }
+
+###
+
+// @name update
+PUT {{baseUri}}/api/expense/{{create.response.body.$.data.id}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "item": "Mineral water",
+  "price": 1.50,
+  "version": 0
+}
