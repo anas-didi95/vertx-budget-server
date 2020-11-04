@@ -22,7 +22,8 @@ public class TestExpenseVerticle {
     long prefix = System.currentTimeMillis();
     return new JsonObject()//
         .put("item", prefix + "item")//
-        .put("price", 0);
+        .put("price", 0)//
+        .put("version", 0);
   }
 
   private MongoClient getMongoClient(Vertx vertx) throws Exception {
