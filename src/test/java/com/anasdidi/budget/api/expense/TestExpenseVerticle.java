@@ -126,11 +126,21 @@ public class TestExpenseVerticle {
 
       webClient.delete(appConfig.getAppPort(), appConfig.getAppHost(), requestURI + "/" + id)
           .rxSendJsonObject(body).subscribe(response -> {
-            Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
-            Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
-                response.getHeader("Content-Type"));
+            testContext.verify(() -> {
+              Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
+              Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
+                  response.getHeader("Content-Type"));
 
-            testContext.completeNow();
+              JsonObject responseBody = response.bodyAsJsonObject();
+              Assertions.assertNotNull(responseBody);
+
+              JsonObject status = responseBody.getJsonObject("status");
+              Assertions.assertNotNull(status);
+              Assertions.assertEquals(true, status.getBoolean("isSuccess"));
+              Assertions.assertEquals(AppConstants.MSG_DELETE_SUCCESS, status.getString("message"));
+
+              testContext.completeNow();
+            });
           }, e -> testContext.failNow(e));
     }, e -> testContext.failNow(e));
   }
