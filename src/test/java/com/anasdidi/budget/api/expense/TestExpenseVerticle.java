@@ -112,4 +112,26 @@ public class TestExpenseVerticle {
           }, e -> testContext.failNow(e));
     }, e -> testContext.failNow(e));
   }
+
+  @Test
+  void testExpenseDeleteSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
+    AppConfig appConfig = AppConfig.instance();
+    WebClient webClient = WebClient.create(vertx);
+    JsonObject document = generateDocument();
+    MongoClient mongoClient = getMongoClient(vertx);
+
+    mongoClient.rxInsert("expenses", document).subscribe(id -> {
+      Assertions.assertNotNull(id);
+      JsonObject body = new JsonObject().put("version", 0);
+
+      webClient.delete(appConfig.getAppPort(), appConfig.getAppHost(), requestURI + "/" + id)
+          .rxSendJsonObject(body).subscribe(response -> {
+            Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
+            Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
+                response.getHeader("Content-Type"));
+
+            testContext.completeNow();
+          }, e -> testContext.failNow(e));
+    }, e -> testContext.failNow(e));
+  }
 }
