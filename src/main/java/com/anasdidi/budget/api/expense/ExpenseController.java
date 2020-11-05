@@ -65,4 +65,21 @@ class ExpenseController extends AbstractController {
 
     sendResponse(routingContext, AppConstants.STATUS_CODE_OK, subscriber, requestId);
   }
+
+  void doDelete(RoutingContext routingContext) {
+    final String TAG = "doDelete";
+    String requestId = routingContext.get("requestId");
+    String expenseId = routingContext.request().getParam("id");
+    JsonObject requestBody = routingContext.getBodyAsJson();
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] expenseId={}", TAG, requestId, expenseId);
+      logger.debug("[{}:{}] requestBody\n{}", TAG, requestId, requestBody.encodePrettily());
+    }
+
+    Single<JsonObject> subscriber = Single.just("")//
+        .map(s -> new JsonObject());
+
+    sendResponse(routingContext, AppConstants.STATUS_CODE_OK, subscriber, requestId);
+  }
 }
