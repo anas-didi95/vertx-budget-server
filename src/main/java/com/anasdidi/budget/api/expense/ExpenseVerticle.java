@@ -25,6 +25,7 @@ public class ExpenseVerticle extends AbstractVerticle {
     Router router = Router.router(vertx);
 
     router.post("/").handler(expenseController::doCreate);
+    router.put("/:id").handler(expenseController::doUpdate);
 
     mainRouter.mountSubRouter("/api/expense", router);
     logger.info("[start] Deployment success");

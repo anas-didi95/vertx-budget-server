@@ -28,4 +28,23 @@ class ExpenseService {
 
     return mongoClient.rxSave("expenses", document).toSingle();
   }
+
+  Single<String> update(ExpenseVO vo, String requestId) {
+    final String TAG = "update";
+    JsonObject query = new JsonObject()//
+        .put("_id", vo.id)//
+        .put("version", vo.version);
+    JsonObject update = new JsonObject().put("$set", ExpenseVO.toDocument(vo)//
+        .put("updateDate", Instant.now())//
+        .put("version", vo.version + 1));
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] query\n{}", TAG, requestId, query.encodePrettily());
+      logger.debug("[{}:{}] update\n{}", TAG, requestId, update.encodePrettily());
+    }
+
+    return mongoClient.rxFindOneAndUpdate("expenses", query, update)//
+        .map(doc -> doc.getString("_id"))//
+        .toSingle();
+  }
 }

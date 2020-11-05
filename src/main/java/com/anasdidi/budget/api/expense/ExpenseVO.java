@@ -9,13 +9,16 @@ class ExpenseVO {
   final String item;
   final Double price;
   final Instant createDate;
+  final Instant updateDate;
   final Long version;
 
-  ExpenseVO(String id, String item, Double price, Instant createDate, Long version) {
+  ExpenseVO(String id, String item, Double price, Instant createDate, Instant updateDate,
+      Long version) {
     this.id = id;
     this.item = item;
     this.price = price;
     this.createDate = createDate;
+    this.updateDate = updateDate;
     this.version = version;
   }
 
@@ -24,9 +27,10 @@ class ExpenseVO {
     String item = json.getString("item");
     Double price = json.getDouble("price");
     Instant createDate = json.getInstant("createDate");
+    Instant updateDate = json.getInstant("updateDate");
     Long version = json.getLong("version");
 
-    return new ExpenseVO(id, item, price, createDate, version);
+    return new ExpenseVO(id, item, price, createDate, updateDate, version);
   }
 
   static JsonObject toDocument(ExpenseVO vo) {
