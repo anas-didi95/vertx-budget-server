@@ -2,6 +2,7 @@ package com.anasdidi.budget.api.expense;
 
 import com.anasdidi.budget.MainVerticle;
 import com.anasdidi.budget.common.AppConfig;
+import com.anasdidi.budget.common.AppConstants;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,8 +53,9 @@ public class TestExpenseVerticle {
     webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), requestURI)
         .rxSendJsonObject(expense).subscribe(response -> {
           testContext.verify(() -> {
-            Assertions.assertEquals(201, response.statusCode());
-            Assertions.assertEquals("application/json", response.getHeader("Content-Type"));
+            Assertions.assertEquals(AppConstants.STATUS_CODE_CREATED, response.statusCode());
+            Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
+                response.getHeader("Content-Type"));
 
             JsonObject responseBody = response.bodyAsJsonObject();
             Assertions.assertNotNull(responseBody);
@@ -61,7 +63,7 @@ public class TestExpenseVerticle {
             JsonObject status = responseBody.getJsonObject("status");
             Assertions.assertNotNull(status);
             Assertions.assertEquals(true, status.getBoolean("isSuccess"));
-            Assertions.assertEquals("Record successfully created.", status.getString("message"));
+            Assertions.assertEquals(AppConstants.MSG_CREATE_SUCCESS, status.getString("message"));
 
             JsonObject data = responseBody.getJsonObject("data");
             Assertions.assertNotNull(data);
@@ -88,8 +90,9 @@ public class TestExpenseVerticle {
       webClient.put(appConfig.getAppPort(), appConfig.getAppHost(), requestURI + "/" + id)
           .rxSendJsonObject(document).subscribe(response -> {
             testContext.verify(() -> {
-              Assertions.assertEquals(200, response.statusCode());
-              Assertions.assertEquals("application/json", response.getHeader("Content-Type"));
+              Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
+              Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
+                  response.getHeader("Content-Type"));
 
               JsonObject responseBody = response.bodyAsJsonObject();
               Assertions.assertNotNull(responseBody);
@@ -97,7 +100,7 @@ public class TestExpenseVerticle {
               JsonObject status = responseBody.getJsonObject("status");
               Assertions.assertNotNull(status);
               Assertions.assertEquals(true, status.getBoolean("isSuccess"));
-              Assertions.assertEquals("Record successfully updated.", status.getString("message"));
+              Assertions.assertEquals(AppConstants.MSG_UPDATE_SUCCESS, status.getString("message"));
 
               JsonObject data = responseBody.getJsonObject("data");
               Assertions.assertNotNull(data);

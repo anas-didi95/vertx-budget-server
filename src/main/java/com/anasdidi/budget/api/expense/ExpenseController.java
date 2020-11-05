@@ -1,6 +1,7 @@
 package com.anasdidi.budget.api.expense;
 
 import com.anasdidi.budget.common.AbstractController;
+import com.anasdidi.budget.common.AppConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.reactivex.Single;
@@ -31,12 +32,12 @@ class ExpenseController extends AbstractController {
         .map(id -> new JsonObject()//
             .put("status", new JsonObject()//
                 .put("isSuccess", true)//
-                .put("message", "Record successfully created."))
+                .put("message", AppConstants.MSG_CREATE_SUCCESS))
             .put("data", new JsonObject()//
                 .put("requestId", requestId)//
                 .put("id", id)));
 
-    sendResponse(routingContext, 201, subscriber, requestId);
+    sendResponse(routingContext, AppConstants.STATUS_CODE_CREATED, subscriber, requestId);
   }
 
   void doUpdate(RoutingContext routingContext) {
@@ -57,11 +58,11 @@ class ExpenseController extends AbstractController {
         .map(id -> new JsonObject()//
             .put("status", new JsonObject()//
                 .put("isSuccess", true)//
-                .put("message", "Record successfully updated."))//
+                .put("message", AppConstants.MSG_UPDATE_SUCCESS))//
             .put("data", new JsonObject()//
                 .put("requestId", requestId)//
                 .put("id", id)));
 
-    sendResponse(routingContext, 200, subscriber, requestId);
+    sendResponse(routingContext, AppConstants.STATUS_CODE_OK, subscriber, requestId);
   }
 }

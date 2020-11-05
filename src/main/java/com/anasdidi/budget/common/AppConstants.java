@@ -14,4 +14,12 @@ public class AppConstants {
     HEADERS.put("X-XSS-Protection", "1; mode=block");
     HEADERS.put("X-Frame-Options", "deny");
   }
+
+  public static final String MEDIA_APP_JSON = "application/json";
+
+  public static final int STATUS_CODE_OK = 200;
+  public static final int STATUS_CODE_CREATED = 201;
+
+  public static final String MSG_CREATE_SUCCESS = "Record successfully created.";
+  public static final String MSG_UPDATE_SUCCESS = "Record successfully updated.";
 }
