@@ -47,4 +47,19 @@ class ExpenseService {
         .map(doc -> doc.getString("_id"))//
         .toSingle();
   }
+
+  Single<String> delete(ExpenseVO vo, String requestId) {
+    final String TAG = "delete";
+    JsonObject query = new JsonObject()//
+        .put("_id", vo.id)//
+        .put("version", vo.version);
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] query\n{}", TAG, requestId, query.encodePrettily());
+    }
+
+    return mongoClient.rxFindOneAndDelete("expenses", query)//
+        .map(doc -> doc.getString("_id"))//
+        .toSingle();
+  }
 }

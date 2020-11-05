@@ -77,8 +77,11 @@ class ExpenseController extends AbstractController {
       logger.debug("[{}:{}] requestBody\n{}", TAG, requestId, requestBody.encodePrettily());
     }
 
-    Single<JsonObject> subscriber = Single.just("")//
-        .map(s -> new JsonObject()//
+    Single<JsonObject> subscriber = Single.just(requestBody)//
+        .map(json -> json.put("id", expenseId))//
+        .map(json -> ExpenseVO.fromJson(json))//
+        .flatMap(vo -> expenseService.delete(vo, requestId))//
+        .map(id -> new JsonObject()//
             .put("status", new JsonObject()//
                 .put("isSuccess", true)//
                 .put("message", AppConstants.MSG_DELETE_SUCCESS))//
