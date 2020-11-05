@@ -78,7 +78,10 @@ class ExpenseController extends AbstractController {
     }
 
     Single<JsonObject> subscriber = Single.just("")//
-        .map(s -> new JsonObject());
+        .map(s -> new JsonObject()//
+            .put("status", new JsonObject()//
+                .put("isSuccess", true)//
+                .put("message", AppConstants.MSG_DELETE_SUCCESS)));
 
     sendResponse(routingContext, AppConstants.STATUS_CODE_OK, subscriber, requestId);
   }
