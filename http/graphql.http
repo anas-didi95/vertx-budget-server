@@ -12,3 +12,17 @@ Content-Type: application/json
     "format": "yyyy-MM-dd"
   }
 }
+
+###
+
+// @name getExpenseList
+POST {{baseUri}}/graphql
+Accept: application/json
+Content-Type: application/json
+
+{
+  "query": "query($format: String) { expenses { id item price createDate(format: $format) updateDate(format: $format) version } }",
+  "variables": {
+    "format": "EE, yyyy-MM-dd HH:mm:ss a"
+  }
+}
