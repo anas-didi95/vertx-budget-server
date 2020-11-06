@@ -3,7 +3,6 @@ package com.anasdidi.budget.api.expense;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.vertx.core.Promise;
-import io.vertx.core.json.JsonObject;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.EventBus;
 import io.vertx.reactivex.ext.mongo.MongoClient;
@@ -32,18 +31,7 @@ public class ExpenseVerticle extends AbstractVerticle {
     router.put("/:id").handler(expenseController::doUpdate);
     router.delete("/:id").handler(expenseController::doDelete);
 
-    eventBus.consumer("/expense/id").handler(request -> {
-      // JsonObject requestBody = (JsonObject) request.body();
-      JsonObject responseBody = new JsonObject()//
-          .put("_id", "id")//
-          .put("item", "item")//
-          .put("price", 99.99)//
-          .put("createDate", "createDate")//
-          .put("updateDate", "updateDate")//
-          .put("version", 0);
-
-      request.reply(responseBody);
-    });
+    eventBus.consumer("/expense/id").handler(expenseController::getExpenseById);
 
     mainRouter.mountSubRouter(ExpenseConstants.REQUEST_URI, router);
     logger.info("[start] Deployment success");

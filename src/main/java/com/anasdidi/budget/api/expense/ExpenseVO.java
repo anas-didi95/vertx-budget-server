@@ -44,4 +44,14 @@ class ExpenseVO {
 
     return document;
   }
+
+  static JsonObject toJson(ExpenseVO vo) {
+    return new JsonObject()//
+        .put("id", vo.id)//
+        .put("item", vo.item)//
+        .put("price", vo.price)//
+        .put("createDate", vo.createDate)//
+        .put("updateDate", vo.updateDate)//
+        .put("version", vo.version);
+  }
 }

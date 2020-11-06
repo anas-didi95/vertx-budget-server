@@ -62,4 +62,19 @@ class ExpenseService {
         .map(doc -> doc.getString("_id"))//
         .toSingle();
   }
+
+  Single<ExpenseVO> getExpenseById(ExpenseVO vo, String requestId) {
+    final String TAG = "getExpenseById";
+    JsonObject query = new JsonObject();
+    JsonObject fields = new JsonObject();
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] query\n{}", TAG, requestId, query.encodePrettily());
+      logger.debug("[{}:{}] fields\n{}", TAG, requestId, fields.encodePrettily());
+    }
+
+    return mongoClient.rxFindOne(ExpenseConstants.COLLECTION_NAME, query, fields)//
+        .map(json -> ExpenseVO.fromJson(json))//
+        .toSingle();
+  }
 }

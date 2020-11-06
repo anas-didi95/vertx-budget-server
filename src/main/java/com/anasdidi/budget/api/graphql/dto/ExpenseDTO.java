@@ -13,7 +13,7 @@ public class ExpenseDTO {
   private final Long version;
 
   public static ExpenseDTO fromJson(JsonObject json) {
-    String id = json.getString("_id");
+    String id = json.getString("id");
     String item = json.getString("item");
     Double price = json.getDouble("price");
     String createDate = json.getString("createDate");

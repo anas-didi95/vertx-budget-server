@@ -31,6 +31,7 @@ class GraphqlDataFetcher {
     }
 
     if (!id.isBlank()) {
+      logger.info("[{}:{}] Event={}", TAG, requestId, "/expense/id");
       eventBux.rxRequest("/expense/id", requestBody).subscribe(response -> {
         JsonObject responseBody = (JsonObject) response.body();
 
