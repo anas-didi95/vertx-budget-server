@@ -1,6 +1,8 @@
 package com.anasdidi.budget.api.expense;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.reactivex.Single;
@@ -76,5 +78,17 @@ class ExpenseService {
     return mongoClient.rxFindOne(ExpenseConstants.COLLECTION_NAME, query, fields)//
         .map(json -> ExpenseVO.fromJson(json))//
         .toSingle();
+  }
+
+  Single<List<ExpenseVO>> getExpenseList(String requestId) {
+    final String TAG = "getExpenseList";
+    JsonObject query = new JsonObject();
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] query\n{}", TAG, requestId, query.encodePrettily());
+    }
+
+    return mongoClient.rxFind(ExpenseConstants.COLLECTION_NAME, query).map(resultList -> resultList
+        .stream().map(json -> ExpenseVO.fromJson(json)).collect(Collectors.toList()));
   }
 }

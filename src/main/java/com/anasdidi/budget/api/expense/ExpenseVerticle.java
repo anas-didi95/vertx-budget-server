@@ -32,6 +32,7 @@ public class ExpenseVerticle extends AbstractVerticle {
     router.delete("/:id").handler(expenseController::doDelete);
 
     eventBus.consumer("/expense/id").handler(expenseController::getExpenseById);
+    eventBus.consumer("/expenses").handler(expenseController::getExpenseList);
 
     mainRouter.mountSubRouter(ExpenseConstants.REQUEST_URI, router);
     logger.info("[start] Deployment success");

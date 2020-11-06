@@ -9,4 +9,5 @@ type Expense {
 
 type Query {
   expense(id: String): Expense
+  expenses: [Expense]
 }
