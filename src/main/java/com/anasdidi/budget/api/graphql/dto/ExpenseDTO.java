@@ -1,5 +1,7 @@
 package com.anasdidi.budget.api.graphql.dto;
 
+import java.time.Instant;
+import com.anasdidi.budget.common.AppUtils;
 import graphql.schema.DataFetchingEnvironment;
 import io.vertx.core.json.JsonObject;
 
@@ -46,11 +48,25 @@ public class ExpenseDTO {
   }
 
   public String getCreateDate(DataFetchingEnvironment environment) {
-    return createDate;
+    String format = environment.getArgument("format");
+
+    if (format == null) {
+      return createDate;
+    } else {
+      Instant instant = Instant.parse(createDate);
+      return AppUtils.getFormattedDateString(instant, format);
+    }
   }
 
   public String getUpdateDate(DataFetchingEnvironment environment) {
-    return updateDate;
+    String format = environment.getArgument("format");
+
+    if (format == null) {
+      return updateDate;
+    } else {
+      Instant instant = Instant.parse(updateDate);
+      return AppUtils.getFormattedDateString(instant, format);
+    }
   }
 
   public Long getVersion(DataFetchingEnvironment environment) {

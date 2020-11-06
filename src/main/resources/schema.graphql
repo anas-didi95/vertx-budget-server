@@ -2,8 +2,8 @@ type Expense {
   id: String!
   item: String!
   price: Float!
-  createDate: String!
-  updateDate: String
+  createDate(format: String): String!
+  updateDate(format: String): String
   version: Int!
 }
 
