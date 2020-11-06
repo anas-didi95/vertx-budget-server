@@ -26,7 +26,7 @@ class ExpenseService {
       logger.debug("[{}:{}] document\n{}", TAG, requestId, document.encodePrettily());
     }
 
-    return mongoClient.rxSave("expenses", document).toSingle();
+    return mongoClient.rxSave(ExpenseConstants.COLLECTION_NAME, document).toSingle();
   }
 
   Single<String> update(ExpenseVO vo, String requestId) {
@@ -43,7 +43,22 @@ class ExpenseService {
       logger.debug("[{}:{}] update\n{}", TAG, requestId, update.encodePrettily());
     }
 
-    return mongoClient.rxFindOneAndUpdate("expenses", query, update)//
+    return mongoClient.rxFindOneAndUpdate(ExpenseConstants.COLLECTION_NAME, query, update)//
+        .map(doc -> doc.getString("_id"))//
+        .toSingle();
+  }
+
+  Single<String> delete(ExpenseVO vo, String requestId) {
+    final String TAG = "delete";
+    JsonObject query = new JsonObject()//
+        .put("_id", vo.id)//
+        .put("version", vo.version);
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] query\n{}", TAG, requestId, query.encodePrettily());
+    }
+
+    return mongoClient.rxFindOneAndDelete(ExpenseConstants.COLLECTION_NAME, query)//
         .map(doc -> doc.getString("_id"))//
         .toSingle();
   }

@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class AppConstants {
 
+  public static final String CONTEXT_PATH = "/budget";
+
   public static final Map<String, String> HEADERS = new HashMap<>();
 
   static {
@@ -22,4 +24,5 @@ public class AppConstants {
 
   public static final String MSG_CREATE_SUCCESS = "Record successfully created.";
   public static final String MSG_UPDATE_SUCCESS = "Record successfully updated.";
+  public static final String MSG_DELETE_SUCCESS = "Record successfully deleted.";
 }

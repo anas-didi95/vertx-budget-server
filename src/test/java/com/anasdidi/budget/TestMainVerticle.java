@@ -1,7 +1,7 @@
 package com.anasdidi.budget;
 
 import com.anasdidi.budget.common.AppConfig;
-
+import com.anasdidi.budget.common.AppConstants;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,8 +50,9 @@ public class TestMainVerticle {
     WebClient webClient = WebClient.create(vertx);
     AppConfig appConfig = AppConfig.instance();
 
-    webClient.get(appConfig.getAppPort(), appConfig.getAppHost(), "/budget/ping").rxSend()
-        .subscribe(response -> {
+    webClient
+        .get(appConfig.getAppPort(), appConfig.getAppHost(), AppConstants.CONTEXT_PATH + "/ping")
+        .rxSend().subscribe(response -> {
           testContext.verify(() -> {
             Assertions.assertEquals(200, response.statusCode());
 

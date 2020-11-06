@@ -3,6 +3,7 @@ package com.anasdidi.budget;
 import java.util.UUID;
 import com.anasdidi.budget.api.expense.ExpenseVerticle;
 import com.anasdidi.budget.common.AppConfig;
+import com.anasdidi.budget.common.AppConstants;
 import com.anasdidi.budget.common.AppUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +57,7 @@ public class MainVerticle extends AbstractVerticle {
 
       int port = appConfig.getAppPort();
       String host = appConfig.getAppHost();
-      Router contextPath = Router.router(vertx).mountSubRouter("/budget", router);
+      Router contextPath = Router.router(vertx).mountSubRouter(AppConstants.CONTEXT_PATH, router);
       vertx.createHttpServer().requestHandler(contextPath).rxListen(port, host).subscribe(r -> {
         logger.info("[start] HTTP server started on {}:{}", host, port);
         startPromise.complete();

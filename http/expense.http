@@ -22,3 +22,14 @@ Content-Type: application/json
   "price": 1.50,
   "version": 0
 }
+
+###
+
+// @name delete
+DELETE {{baseUri}}/api/expense/{{create.response.body.$.data.id}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "version": 0
+}
