@@ -1,5 +1,7 @@
 package com.anasdidi.budget.common;
 
+import java.util.UUID;
+
 public class AppUtils {
 
   public static String getFormattedMillis(long millis) {
@@ -21,5 +23,9 @@ public class AppUtils {
     millis %= secToMs;
 
     return String.format("%dd %dh %dmin %dsec", day, hour, min, sec);
+  }
+
+  public static String generateUUID() {
+    return UUID.randomUUID().toString().replace("-", "").toUpperCase();
   }
 }

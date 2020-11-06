@@ -1,7 +1,7 @@
 package com.anasdidi.budget;
 
-import java.util.UUID;
 import com.anasdidi.budget.api.expense.ExpenseVerticle;
+import com.anasdidi.budget.api.graphql.GraphqlVerticle;
 import com.anasdidi.budget.common.AppConfig;
 import com.anasdidi.budget.common.AppConstants;
 import com.anasdidi.budget.common.AppUtils;
@@ -15,6 +15,7 @@ import io.vertx.core.logging.Log4j2LogDelegateFactory;
 import io.vertx.ext.healthchecks.Status;
 import io.vertx.reactivex.config.ConfigRetriever;
 import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.core.eventbus.EventBus;
 import io.vertx.reactivex.ext.healthchecks.HealthCheckHandler;
 import io.vertx.reactivex.ext.mongo.MongoClient;
 import io.vertx.reactivex.ext.web.Router;
@@ -49,11 +50,13 @@ public class MainVerticle extends AbstractVerticle {
 
       Router router = Router.router(vertx);
       router.route().handler(setupBodyHandler());
-      router.route().handler(routingContext -> routingContext
-          .put("requestId", UUID.randomUUID().toString().replace("-", "").toUpperCase()).next());
+      router.route().handler(
+          routingContext -> routingContext.put("requestId", AppUtils.generateUUID()).next());
       router.get("/ping").handler(setupHealthCheck());
 
-      vertx.deployVerticle(new ExpenseVerticle(router, mongoClient));
+      EventBus eventBus = vertx.eventBus();
+      vertx.deployVerticle(new GraphqlVerticle(router, eventBus));
+      vertx.deployVerticle(new ExpenseVerticle(router, eventBus, mongoClient));
 
       int port = appConfig.getAppPort();
       String host = appConfig.getAppHost();

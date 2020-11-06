@@ -1,0 +1,12 @@
+type Expense {
+  id: String!
+  item: String!
+  price: Float!
+  createDate: String!
+  updateDate: String
+  version: Int!
+}
+
+type Query {
+  expense(id: String): Expense
+}
