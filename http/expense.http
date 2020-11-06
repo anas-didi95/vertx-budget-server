@@ -6,8 +6,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "item": "Water",
-  "price": 1.00
+  "item": "Snack",
+  "price": 3
 }
 
 ###

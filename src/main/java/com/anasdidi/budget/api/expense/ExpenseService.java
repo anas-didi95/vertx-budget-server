@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.FindOptions;
 import io.vertx.reactivex.ext.mongo.MongoClient;
 
 class ExpenseService {
@@ -83,12 +84,18 @@ class ExpenseService {
   Single<List<ExpenseVO>> getExpenseList(String requestId) {
     final String TAG = "getExpenseList";
     JsonObject query = new JsonObject();
+    FindOptions options = new FindOptions()//
+        .setSort(new JsonObject()//
+            .put("createDate", -1));
+
 
     if (logger.isDebugEnabled()) {
       logger.debug("[{}:{}] query\n{}", TAG, requestId, query.encodePrettily());
+      logger.debug("[{}:{}] options\n{}", TAG, requestId, options.toJson().encodePrettily());
     }
 
-    return mongoClient.rxFind(ExpenseConstants.COLLECTION_NAME, query).map(resultList -> resultList
-        .stream().map(json -> ExpenseVO.fromJson(json)).collect(Collectors.toList()));
+    return mongoClient.rxFindWithOptions(ExpenseConstants.COLLECTION_NAME, query, options)
+        .map(resultList -> resultList.stream().map(json -> ExpenseVO.fromJson(json))
+            .collect(Collectors.toList()));
   }
 }
