@@ -1,5 +1,6 @@
 package com.anasdidi.budget.api.graphql;
 
+import com.anasdidi.budget.common.AppConfig;
 import com.anasdidi.budget.common.AppConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,16 +32,21 @@ public class GraphqlVerticle extends AbstractVerticle {
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
+    AppConfig appConfig = AppConfig.instance();
     Router router = Router.router(vertx);
     router.post("/").handler(GraphQLHandler.create(createGraphQL()));
     mainRouter.mountSubRouter("/graphql", router);
 
-    Router router1 = Router.router(vertx);
-    router1.post("/graphql").handler(GraphQLHandler.create(createGraphQL()));
-    router1.get("/*").handler(GraphiQLHandler.create(new GraphiQLHandlerOptions()//
-        .setGraphQLUri(AppConstants.CONTEXT_PATH + "/graphiql/graphql")//
-        .setEnabled(true)));
-    mainRouter.mountSubRouter("/graphiql", router1);
+    if (appConfig.getGraphiqlEnable()) {
+      Router router1 = Router.router(vertx);
+      router1.post("/graphql").handler(GraphQLHandler.create(createGraphQL()));
+      router1.get("/*").handler(GraphiQLHandler.create(new GraphiQLHandlerOptions()//
+          .setGraphQLUri(AppConstants.CONTEXT_PATH + "/graphiql/graphql")//
+          .setEnabled(appConfig.getGraphiqlEnable())));
+      mainRouter.mountSubRouter("/graphiql", router1);
+
+      logger.info("[start] Graphiql router started at request uri, {}/", "/graphiql");
+    }
 
     logger.info("[start] Deployment success");
     startPromise.complete();

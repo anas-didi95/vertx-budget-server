@@ -35,6 +35,7 @@ public class AppConfig {
         .put("MONGO_PORT", getMongoPort())//
         .put("MONGO_AUTH_SOURCE", getMongoAuthSource())//
         .put("MONGO_DB_NAME", getMongoDbName())//
+        .put("GRAPHIQL_ENABLE", getGraphiqlEnable())//
         .encodePrettily();
   }
 
@@ -68,5 +69,9 @@ public class AppConfig {
 
   public String getMongoDbName() {
     return cfg.getString("MONGO_DB_NAME", "budget");
+  }
+
+  public boolean getGraphiqlEnable() {
+    return cfg.getBoolean("GRAPHIQL_ENABLE", false);
   }
 }
