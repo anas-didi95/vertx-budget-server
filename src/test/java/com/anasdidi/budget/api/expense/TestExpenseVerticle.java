@@ -18,7 +18,7 @@ import io.vertx.reactivex.ext.web.client.WebClient;
 @ExtendWith(VertxExtension.class)
 public class TestExpenseVerticle {
 
-  private String requestURI = "/budget/api/expense";
+  private String requestURI = AppConstants.CONTEXT_PATH + ExpenseConstants.REQUEST_URI;
 
   private JsonObject generateDocument() {
     long prefix = System.currentTimeMillis();
@@ -49,11 +49,12 @@ public class TestExpenseVerticle {
   static void postTesting(Vertx vertx, VertxTestContext testContext) throws Exception {
     MongoClient mongoClient = getMongoClient(vertx);
 
-    mongoClient.rxRemoveDocuments("expenses", new JsonObject()).subscribe(result -> {
-      testContext.verify(() -> {
-        testContext.completeNow();
-      });
-    }, e -> testContext.failNow(e));
+    mongoClient.rxRemoveDocuments(ExpenseConstants.COLLECTION_NAME, new JsonObject())
+        .subscribe(result -> {
+          testContext.verify(() -> {
+            testContext.completeNow();
+          });
+        }, e -> testContext.failNow(e));
   }
 
   @Test
@@ -63,7 +64,7 @@ public class TestExpenseVerticle {
     JsonObject expense = generateDocument();
     MongoClient mongoClient = getMongoClient(vertx);
 
-    mongoClient.rxCount("expenses", new JsonObject()).subscribe(prevCount -> {
+    mongoClient.rxCount(ExpenseConstants.COLLECTION_NAME, new JsonObject()).subscribe(prevCount -> {
       webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), requestURI)
           .rxSendJsonObject(expense).subscribe(response -> {
             testContext.verify(() -> {
@@ -84,13 +85,14 @@ public class TestExpenseVerticle {
               Assertions.assertNotNull(data.getString("requestId"));
               Assertions.assertNotNull(data.getString("id"));
 
-              mongoClient.rxCount("expenses", new JsonObject()).subscribe(currCount -> {
-                testContext.verify(() -> {
-                  Assertions.assertNotEquals(prevCount, currCount);
+              mongoClient.rxCount(ExpenseConstants.COLLECTION_NAME, new JsonObject())
+                  .subscribe(currCount -> {
+                    testContext.verify(() -> {
+                      Assertions.assertNotEquals(prevCount, currCount);
 
-                  testContext.completeNow();
-                });
-              }, e -> testContext.failNow(e));
+                      testContext.completeNow();
+                    });
+                  }, e -> testContext.failNow(e));
             });
           }, e -> testContext.failNow(e));
     }, e -> testContext.failNow(e));
@@ -103,7 +105,7 @@ public class TestExpenseVerticle {
     JsonObject document = generateDocument();
     MongoClient mongoClient = getMongoClient(vertx);
 
-    mongoClient.rxInsert("expenses", document).subscribe(id -> {
+    mongoClient.rxInsert(ExpenseConstants.COLLECTION_NAME, document).subscribe(id -> {
       document.put("price", 999);
       document.put("version", 0);
 
@@ -127,8 +129,8 @@ public class TestExpenseVerticle {
               Assertions.assertNotNull(data.getString("requestId"));
               Assertions.assertNotNull(data.getString("id"));
 
-              mongoClient.rxFindOne("expenses", new JsonObject().put("_id", id), new JsonObject())
-                  .subscribe(currDoc -> {
+              mongoClient.rxFindOne(ExpenseConstants.COLLECTION_NAME,
+                  new JsonObject().put("_id", id), new JsonObject()).subscribe(currDoc -> {
                     testContext.verify(() -> {
                       Assertions.assertNotEquals(currDoc.getLong("version"),
                           document.getLong("version"));
@@ -149,40 +151,42 @@ public class TestExpenseVerticle {
     JsonObject document = generateDocument();
     MongoClient mongoClient = getMongoClient(vertx);
 
-    mongoClient.rxInsert("expenses", document).subscribe(id -> {
-      mongoClient.rxCount("expenses", new JsonObject()).subscribe(prevCount -> {
-        JsonObject body = new JsonObject().put("version", 0);
+    mongoClient.rxInsert(ExpenseConstants.COLLECTION_NAME, document).subscribe(id -> {
+      mongoClient.rxCount(ExpenseConstants.COLLECTION_NAME, new JsonObject())
+          .subscribe(prevCount -> {
+            JsonObject body = new JsonObject().put("version", 0);
 
-        webClient.delete(appConfig.getAppPort(), appConfig.getAppHost(), requestURI + "/" + id)
-            .rxSendJsonObject(body).subscribe(response -> {
-              testContext.verify(() -> {
-                Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
-                Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
-                    response.getHeader("Content-Type"));
-
-                JsonObject responseBody = response.bodyAsJsonObject();
-                Assertions.assertNotNull(responseBody);
-
-                JsonObject status = responseBody.getJsonObject("status");
-                Assertions.assertNotNull(status);
-                Assertions.assertEquals(true, status.getBoolean("isSuccess"));
-                Assertions.assertEquals(AppConstants.MSG_DELETE_SUCCESS,
-                    status.getString("message"));
-
-                JsonObject data = responseBody.getJsonObject("data");
-                Assertions.assertNotNull(data);
-                Assertions.assertNotNull(data.getString("requestId"));
-
-                mongoClient.rxCount("expenses", new JsonObject()).subscribe(currCount -> {
+            webClient.delete(appConfig.getAppPort(), appConfig.getAppHost(), requestURI + "/" + id)
+                .rxSendJsonObject(body).subscribe(response -> {
                   testContext.verify(() -> {
-                    Assertions.assertNotEquals(prevCount, currCount);
+                    Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
+                    Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
+                        response.getHeader("Content-Type"));
 
-                    testContext.completeNow();
+                    JsonObject responseBody = response.bodyAsJsonObject();
+                    Assertions.assertNotNull(responseBody);
+
+                    JsonObject status = responseBody.getJsonObject("status");
+                    Assertions.assertNotNull(status);
+                    Assertions.assertEquals(true, status.getBoolean("isSuccess"));
+                    Assertions.assertEquals(AppConstants.MSG_DELETE_SUCCESS,
+                        status.getString("message"));
+
+                    JsonObject data = responseBody.getJsonObject("data");
+                    Assertions.assertNotNull(data);
+                    Assertions.assertNotNull(data.getString("requestId"));
+
+                    mongoClient.rxCount(ExpenseConstants.COLLECTION_NAME, new JsonObject())
+                        .subscribe(currCount -> {
+                          testContext.verify(() -> {
+                            Assertions.assertNotEquals(prevCount, currCount);
+
+                            testContext.completeNow();
+                          });
+                        }, e -> testContext.failNow(e));
                   });
                 }, e -> testContext.failNow(e));
-              });
-            }, e -> testContext.failNow(e));
-      }, e -> testContext.failNow(e));
+          }, e -> testContext.failNow(e));
     }, e -> testContext.failNow(e));
   }
 }

@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class AppConstants {
 
+  public static final String CONTEXT_PATH = "/budget";
+
   public static final Map<String, String> HEADERS = new HashMap<>();
 
   static {
