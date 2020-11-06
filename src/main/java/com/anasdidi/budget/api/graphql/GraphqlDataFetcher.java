@@ -1,6 +1,8 @@
 package com.anasdidi.budget.api.graphql;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import com.anasdidi.budget.api.graphql.dto.ExpenseDTO;
 import com.anasdidi.budget.common.AppUtils;
@@ -19,6 +21,22 @@ class GraphqlDataFetcher {
 
   GraphqlDataFetcher(EventBus eventBus) {
     this.eventBux = eventBus;
+  }
+
+  void ping(DataFetchingEnvironment environment, Promise<Map<String, Object>> promise) {
+    final String TAG = "expense";
+    String requestId = AppUtils.generateUUID();
+    String value = environment.getArgument("value");
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] value={}", TAG, requestId, value);
+    }
+
+    Map<String, Object> result = new HashMap<>();
+    result.put("isSuccess", true);
+    result.put("testValue", value);
+
+    promise.complete(result);
   }
 
   void expense(DataFetchingEnvironment environment, Promise<ExpenseDTO> promise) {
