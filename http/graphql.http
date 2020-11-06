@@ -1,0 +1,14 @@
+@baseUri=http://{{$processEnv APP_HOST}}:{{$processEnv APP_PORT}}/budget
+
+// @name getExpenseById
+POST {{baseUri}}/graphql
+Accept: application/json
+Content-Type: application/json
+
+{
+  "query": "query($id: String, $format: String) { expense(id: $id) { id item price createDate(format: $format) updateDate(format: $format) version } } ",
+  "variables": {
+    "id": "5fa50447ad490b389134ec21",
+    "format": "yyyy-MM-dd"
+  }
+}

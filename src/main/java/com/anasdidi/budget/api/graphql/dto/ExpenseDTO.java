@@ -61,7 +61,7 @@ public class ExpenseDTO {
   public String getUpdateDate(DataFetchingEnvironment environment) {
     String format = environment.getArgument("format");
 
-    if (format == null) {
+    if (updateDate == null || format == null) {
       return updateDate;
     } else {
       Instant instant = Instant.parse(updateDate);
