@@ -47,6 +47,7 @@ Following table is a **optional** environment variables used in this project.
 | LOG_LEVEL | String | Log level | error |
 | MONGO_AUTH_SOURCE | String | Mongo database for user's credentials | admin |
 | MONGO_DB_NAME | String | Mongo database name | budget |
+| GRAPHIQL_ENABLE | Boolean | Flag to enable GraphiQL | false |
 
 ---
 

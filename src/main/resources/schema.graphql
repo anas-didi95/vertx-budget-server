@@ -1,0 +1,19 @@
+type Ping {
+  isSuccess: Boolean!
+  testValue: String!
+}
+
+type Expense {
+  id: String!
+  item: String!
+  price: Float!
+  createDate(format: String): String!
+  updateDate(format: String): String
+  version: Int!
+}
+
+type Query {
+  ping(value: String!): Ping!
+  expense(id: String): Expense
+  expenses: [Expense]
+}

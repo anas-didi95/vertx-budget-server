@@ -1,11 +1,14 @@
 package com.anasdidi.budget.api.expense;
 
+import java.util.stream.Collectors;
 import com.anasdidi.budget.common.AbstractController;
 import com.anasdidi.budget.common.AppConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.reactivex.Single;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.reactivex.core.eventbus.Message;
 import io.vertx.reactivex.ext.web.RoutingContext;
 
 class ExpenseController extends AbstractController {
@@ -89,5 +92,34 @@ class ExpenseController extends AbstractController {
                 .put("requestId", requestId)));
 
     sendResponse(routingContext, AppConstants.STATUS_CODE_OK, subscriber, requestId);
+  }
+
+  void getExpenseById(Message<Object> request) {
+    final String TAG = "getUserById";
+    JsonObject requestBody = (JsonObject) request.body();
+    String requestId = requestBody.getString("requestId");
+
+    logger.info("[{}:{}] Get expense by id={}", TAG, requestId, requestBody.getString("id"));
+
+    Single.just(requestBody)//
+        .map(json -> ExpenseVO.fromJson(json))//
+        .flatMap(vo -> expenseService.getExpenseById(vo, requestId))//
+        .subscribe(vo -> request.reply(ExpenseVO.toJson(vo)));
+  }
+
+  void getExpenseList(Message<Object> request) {
+    final String TAG = "getExpenseList";
+    JsonObject requestBody = (JsonObject) request.body();
+    String requestId = requestBody.getString("requestId");
+
+    logger.info("[{}:{}] Get expense list", TAG, requestId);
+
+    Single.just(requestBody)//
+        .flatMap(json -> expenseService.getExpenseList(requestId))//
+        .subscribe(resultList -> {
+          JsonArray responseBody = new JsonArray(
+              resultList.stream().map(vo -> ExpenseVO.toJson(vo)).collect(Collectors.toList()));
+          request.reply(responseBody);
+        });
   }
 }

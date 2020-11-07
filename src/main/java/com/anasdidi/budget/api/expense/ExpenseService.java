@@ -1,10 +1,13 @@
 package com.anasdidi.budget.api.expense;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.reactivex.Single;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.mongo.FindOptions;
 import io.vertx.reactivex.ext.mongo.MongoClient;
 
 class ExpenseService {
@@ -61,5 +64,38 @@ class ExpenseService {
     return mongoClient.rxFindOneAndDelete(ExpenseConstants.COLLECTION_NAME, query)//
         .map(doc -> doc.getString("_id"))//
         .toSingle();
+  }
+
+  Single<ExpenseVO> getExpenseById(ExpenseVO vo, String requestId) {
+    final String TAG = "getExpenseById";
+    JsonObject query = new JsonObject();
+    JsonObject fields = new JsonObject();
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] query\n{}", TAG, requestId, query.encodePrettily());
+      logger.debug("[{}:{}] fields\n{}", TAG, requestId, fields.encodePrettily());
+    }
+
+    return mongoClient.rxFindOne(ExpenseConstants.COLLECTION_NAME, query, fields)//
+        .map(json -> ExpenseVO.fromJson(json))//
+        .toSingle();
+  }
+
+  Single<List<ExpenseVO>> getExpenseList(String requestId) {
+    final String TAG = "getExpenseList";
+    JsonObject query = new JsonObject();
+    FindOptions options = new FindOptions()//
+        .setSort(new JsonObject()//
+            .put("createDate", -1));
+
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("[{}:{}] query\n{}", TAG, requestId, query.encodePrettily());
+      logger.debug("[{}:{}] options\n{}", TAG, requestId, options.toJson().encodePrettily());
+    }
+
+    return mongoClient.rxFindWithOptions(ExpenseConstants.COLLECTION_NAME, query, options)
+        .map(resultList -> resultList.stream().map(json -> ExpenseVO.fromJson(json))
+            .collect(Collectors.toList()));
   }
 }

@@ -1,9 +1,11 @@
 package com.anasdidi.budget.api.expense;
 
+import com.anasdidi.budget.common.AppConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.vertx.core.Promise;
 import io.vertx.reactivex.core.AbstractVerticle;
+import io.vertx.reactivex.core.eventbus.EventBus;
 import io.vertx.reactivex.ext.mongo.MongoClient;
 import io.vertx.reactivex.ext.web.Router;
 
@@ -11,11 +13,13 @@ public class ExpenseVerticle extends AbstractVerticle {
 
   private static Logger logger = LogManager.getLogger(ExpenseVerticle.class);
   private final Router mainRouter;
+  private final EventBus eventBus;
   private final ExpenseService expenseService;
   private final ExpenseController expenseController;
 
-  public ExpenseVerticle(Router mainRouter, MongoClient mongoClient) {
+  public ExpenseVerticle(Router mainRouter, EventBus eventBus, MongoClient mongoClient) {
     this.mainRouter = mainRouter;
+    this.eventBus = eventBus;
     this.expenseService = new ExpenseService(mongoClient);
     this.expenseController = new ExpenseController(expenseService);
   }
@@ -27,6 +31,11 @@ public class ExpenseVerticle extends AbstractVerticle {
     router.post("/").handler(expenseController::doCreate);
     router.put("/:id").handler(expenseController::doUpdate);
     router.delete("/:id").handler(expenseController::doDelete);
+
+    eventBus.consumer(AppConstants.EVENT_GET_EXPENSE_BY_ID)
+        .handler(expenseController::getExpenseById);
+    eventBus.consumer(AppConstants.EVENT_GET_EXPENSE_LIST)
+        .handler(expenseController::getExpenseList);
 
     mainRouter.mountSubRouter(ExpenseConstants.REQUEST_URI, router);
     logger.info("[start] Deployment success");
