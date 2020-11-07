@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import com.anasdidi.budget.api.graphql.dto.ExpenseDTO;
+import com.anasdidi.budget.common.AppConstants;
 import com.anasdidi.budget.common.AppUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,8 +53,8 @@ class GraphqlDataFetcher {
     }
 
     if (!id.isBlank()) {
-      logger.info("[{}:{}] event={}", TAG, requestId, "/expense/id");
-      eventBux.rxRequest("/expense/id", requestBody).subscribe(response -> {
+      logger.info("[{}:{}] event={}", TAG, requestId, AppConstants.EVENT_GET_EXPENSE_BY_ID);
+      eventBux.rxRequest(AppConstants.EVENT_GET_EXPENSE_BY_ID, requestBody).subscribe(response -> {
         JsonObject responseBody = (JsonObject) response.body();
 
         if (logger.isDebugEnabled()) {
@@ -76,8 +77,8 @@ class GraphqlDataFetcher {
       logger.debug("[{}:{}] requestBody\n{}", TAG, requestId, requestBody.encodePrettily());
     }
 
-    logger.info("[{}:{}] event={}", TAG, requestId, "/expenses");
-    eventBux.rxRequest("/expenses", requestBody).subscribe(response -> {
+    logger.info("[{}:{}] event={}", TAG, requestId, AppConstants.EVENT_GET_EXPENSE_LIST);
+    eventBux.rxRequest(AppConstants.EVENT_GET_EXPENSE_LIST, requestBody).subscribe(response -> {
       JsonArray responseBody = (JsonArray) response.body();
 
       List<ExpenseDTO> resultList = responseBody.stream()

@@ -16,6 +16,8 @@ import io.vertx.reactivex.ext.web.client.WebClient;
 @ExtendWith(VertxExtension.class)
 public class TestGraphqlVerticle {
 
+  private String requestURI = AppConstants.CONTEXT_PATH + GraphqlConstants.REQUEST_URI;
+
   @BeforeEach
   void deploy_verticle(Vertx vertx, VertxTestContext testContext) {
     vertx.deployVerticle(new MainVerticle(),
@@ -33,11 +35,12 @@ public class TestGraphqlVerticle {
             .put("value", testValue));
 
     Thread.sleep(500);
-    webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), "/budget/graphql")
+    webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), requestURI)
         .rxSendJsonObject(requestBody).subscribe(response -> {
           testContext.verify(() -> {
             Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
-            Assertions.assertEquals("application/json", response.getHeader("Content-Type"));
+            Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
+                response.getHeader("Content-Type"));
 
             JsonObject responseBody = response.bodyAsJsonObject();
             Assertions.assertNotNull(responseBody);

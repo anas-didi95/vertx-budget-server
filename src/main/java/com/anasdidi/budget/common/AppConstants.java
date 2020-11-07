@@ -25,4 +25,7 @@ public class AppConstants {
   public static final String MSG_CREATE_SUCCESS = "Record successfully created.";
   public static final String MSG_UPDATE_SUCCESS = "Record successfully updated.";
   public static final String MSG_DELETE_SUCCESS = "Record successfully deleted.";
+
+  public static final String EVENT_GET_EXPENSE_BY_ID = "/expense/id";
+  public static final String EVENT_GET_EXPENSE_LIST = "/expenses";
 }

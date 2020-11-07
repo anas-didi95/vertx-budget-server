@@ -1,5 +1,6 @@
 package com.anasdidi.budget.api.expense;
 
+import com.anasdidi.budget.common.AppConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import io.vertx.core.Promise;
@@ -31,8 +32,10 @@ public class ExpenseVerticle extends AbstractVerticle {
     router.put("/:id").handler(expenseController::doUpdate);
     router.delete("/:id").handler(expenseController::doDelete);
 
-    eventBus.consumer("/expense/id").handler(expenseController::getExpenseById);
-    eventBus.consumer("/expenses").handler(expenseController::getExpenseList);
+    eventBus.consumer(AppConstants.EVENT_GET_EXPENSE_BY_ID)
+        .handler(expenseController::getExpenseById);
+    eventBus.consumer(AppConstants.EVENT_GET_EXPENSE_LIST)
+        .handler(expenseController::getExpenseList);
 
     mainRouter.mountSubRouter(ExpenseConstants.REQUEST_URI, router);
     logger.info("[start] Deployment success");

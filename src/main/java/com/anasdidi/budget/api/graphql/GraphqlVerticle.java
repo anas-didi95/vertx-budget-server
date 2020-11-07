@@ -35,17 +35,19 @@ public class GraphqlVerticle extends AbstractVerticle {
     AppConfig appConfig = AppConfig.instance();
     Router router = Router.router(vertx);
     router.post("/").handler(GraphQLHandler.create(createGraphQL()));
-    mainRouter.mountSubRouter("/graphql", router);
+    mainRouter.mountSubRouter(GraphqlConstants.REQUEST_URI, router);
 
     if (appConfig.getGraphiqlEnable()) {
       Router router1 = Router.router(vertx);
       router1.post("/graphql").handler(GraphQLHandler.create(createGraphQL()));
       router1.get("/*").handler(GraphiQLHandler.create(new GraphiQLHandlerOptions()//
-          .setGraphQLUri(AppConstants.CONTEXT_PATH + "/graphiql/graphql")//
+          .setGraphQLUri(AppConstants.CONTEXT_PATH + GraphqlConstants.REQUEST_URI_GRAPHIQL
+              + GraphqlConstants.REQUEST_URI)//
           .setEnabled(appConfig.getGraphiqlEnable())));
-      mainRouter.mountSubRouter("/graphiql", router1);
+      mainRouter.mountSubRouter(GraphqlConstants.REQUEST_URI_GRAPHIQL, router1);
 
-      logger.info("[start] Graphiql router started at request uri, {}/", "/graphiql");
+      logger.info("[start] Graphiql router started at request uri, {}/",
+          GraphqlConstants.REQUEST_URI_GRAPHIQL);
     }
 
     logger.info("[start] Deployment success");
