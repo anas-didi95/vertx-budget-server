@@ -66,11 +66,11 @@ public class MainVerticle extends AbstractVerticle {
       @SuppressWarnings("deprecation")
       JWTAuth jwtAuth = JWTAuth.create(vertx, new JWTAuthOptions()//
           .setJWTOptions(new JWTOptions()//
-              .setExpiresInSeconds(3000)//
-              .setIssuer("issuer"))//
+              .setIssuer(appConfig.getJwtIssuer())//
+              .setExpiresInMinutes(appConfig.getJwtExpireInMinutes()))//
           .addPubSecKey(new PubSecKeyOptions()//
               .setAlgorithm("HS256")//
-              .setPublicKey("secret")//
+              .setPublicKey(appConfig.getJwtSecret())//
               .setSymmetric(true)));
 
       EventBus eventBus = vertx.eventBus();

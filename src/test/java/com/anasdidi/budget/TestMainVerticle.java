@@ -40,6 +40,10 @@ public class TestMainVerticle {
       Assertions.assertNotNull(appConfig.getMongoPassword());
       Assertions.assertNotNull(appConfig.getMongoAuthSource());
       Assertions.assertNotNull(appConfig.getMongoDbName());
+      Assertions.assertNotNull(appConfig.getGraphiqlEnable());
+      Assertions.assertNotNull(appConfig.getJwtSecret());
+      Assertions.assertNotNull(appConfig.getJwtIssuer());
+      Assertions.assertNotNull(appConfig.getJwtExpireInMinutes());
 
       testContext.completeNow();
     });

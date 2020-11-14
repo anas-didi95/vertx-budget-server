@@ -36,6 +36,9 @@ public class AppConfig {
         .put("MONGO_AUTH_SOURCE", getMongoAuthSource())//
         .put("MONGO_DB_NAME", getMongoDbName())//
         .put("GRAPHIQL_ENABLE", getGraphiqlEnable())//
+        .put("JWT_SECRET", getJwtSecret())//
+        .put("JWT_ISSUER", getJwtIssuer())//
+        .put("JWT_EXPIRE_IN_MINUTES", getJwtExpireInMinutes())//
         .encodePrettily();
   }
 
@@ -73,5 +76,17 @@ public class AppConfig {
 
   public boolean getGraphiqlEnable() {
     return cfg.getBoolean("GRAPHIQL_ENABLE", false);
+  }
+
+  public String getJwtSecret() {
+    return cfg.getString("JWT_SECRET");
+  }
+
+  public String getJwtIssuer() {
+    return cfg.getString("JWT_ISSUER");
+  }
+
+  public int getJwtExpireInMinutes() {
+    return cfg.getInteger("JWT_EXPIRE_IN_MINUTES");
   }
 }
