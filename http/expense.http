@@ -1,9 +1,11 @@
 @baseUri=http://{{$processEnv APP_HOST}}:{{$processEnv APP_PORT}}/budget
+@accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpc3N1ZXIifQ.FgSmi1aRikqCuBD_FwCa6yla30DVc9AgnyF-HAII--U
 
 // @name create
 POST {{baseUri}}/api/expense
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
   "item": "Snack",
@@ -16,6 +18,7 @@ Content-Type: application/json
 PUT {{baseUri}}/api/expense/{{create.response.body.$.data.id}}
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
   "item": "Mineral water",
@@ -29,6 +32,7 @@ Content-Type: application/json
 DELETE {{baseUri}}/api/expense/{{create.response.body.$.data.id}}
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
   "version": 0
