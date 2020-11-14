@@ -1,9 +1,11 @@
 @baseUri=http://{{$processEnv APP_HOST}}:{{$processEnv APP_PORT}}/budget
+@accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpc3N1ZXIifQ.FgSmi1aRikqCuBD_FwCa6yla30DVc9AgnyF-HAII--U
 
 // @name getExpenseById
 POST {{baseUri}}/graphql
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
   "query": "query($id: String, $format: String) { expense(id: $id) { id item price createDate(format: $format) updateDate(format: $format) version } } ",
@@ -19,6 +21,7 @@ Content-Type: application/json
 POST {{baseUri}}/graphql
 Accept: application/json
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
   "query": "query($format: String) { expenses { id item price createDate(format: $format) updateDate(format: $format) version } }",

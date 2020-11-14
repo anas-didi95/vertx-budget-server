@@ -19,6 +19,9 @@ import io.vertx.reactivex.ext.web.client.WebClient;
 public class TestExpenseVerticle {
 
   private String requestURI = AppConstants.CONTEXT_PATH + ExpenseConstants.REQUEST_URI;
+  // payload = { "iss": "issuer" }, secret = secret
+  private String accessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpc3N1ZXIifQ.FgSmi1aRikqCuBD_FwCa6yla30DVc9AgnyF-HAII--U";
 
   private JsonObject generateDocument() {
     long prefix = System.currentTimeMillis();
@@ -66,7 +69,8 @@ public class TestExpenseVerticle {
 
     mongoClient.rxCount(ExpenseConstants.COLLECTION_NAME, new JsonObject()).subscribe(prevCount -> {
       webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), requestURI)
-          .rxSendJsonObject(expense).subscribe(response -> {
+          .putHeader("Authorization", "Bearer " + accessToken).rxSendJsonObject(expense)
+          .subscribe(response -> {
             testContext.verify(() -> {
               Assertions.assertEquals(AppConstants.STATUS_CODE_CREATED, response.statusCode());
               Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
@@ -110,7 +114,8 @@ public class TestExpenseVerticle {
       document.put("version", 0);
 
       webClient.put(appConfig.getAppPort(), appConfig.getAppHost(), requestURI + "/" + id)
-          .rxSendJsonObject(document).subscribe(response -> {
+          .putHeader("Authorization", "Bearer " + accessToken).rxSendJsonObject(document)
+          .subscribe(response -> {
             testContext.verify(() -> {
               Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
               Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
@@ -157,7 +162,8 @@ public class TestExpenseVerticle {
             JsonObject body = new JsonObject().put("version", 0);
 
             webClient.delete(appConfig.getAppPort(), appConfig.getAppHost(), requestURI + "/" + id)
-                .rxSendJsonObject(body).subscribe(response -> {
+                .putHeader("Authorization", "Bearer " + accessToken).rxSendJsonObject(body)
+                .subscribe(response -> {
                   testContext.verify(() -> {
                     Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
                     Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
