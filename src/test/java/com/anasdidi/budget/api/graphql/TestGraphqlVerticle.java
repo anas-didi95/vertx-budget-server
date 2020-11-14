@@ -17,6 +17,9 @@ import io.vertx.reactivex.ext.web.client.WebClient;
 public class TestGraphqlVerticle {
 
   private String requestURI = AppConstants.CONTEXT_PATH + GraphqlConstants.REQUEST_URI;
+  // payload = { "iss": "issuer" }, secret = secret
+  private String accessToken =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJpc3N1ZXIifQ.FgSmi1aRikqCuBD_FwCa6yla30DVc9AgnyF-HAII--U";
 
   @BeforeEach
   void deploy_verticle(Vertx vertx, VertxTestContext testContext) {
@@ -36,7 +39,8 @@ public class TestGraphqlVerticle {
 
     Thread.sleep(500);
     webClient.post(appConfig.getAppPort(), appConfig.getAppHost(), requestURI)
-        .rxSendJsonObject(requestBody).subscribe(response -> {
+        .putHeader("Authorization", "Bearer " + accessToken).rxSendJsonObject(requestBody)
+        .subscribe(response -> {
           testContext.verify(() -> {
             Assertions.assertEquals(AppConstants.STATUS_CODE_OK, response.statusCode());
             Assertions.assertEquals(AppConstants.MEDIA_APP_JSON,
