@@ -1,6 +1,6 @@
 # Budget Microservice
 
-[![Logo](https://img.shields.io/badge/vert.x-3.9.3-purple.svg)](https://vertx.io")
+[![Logo](https://img.shields.io/badge/vert.x-3.9.4-purple.svg)](https://vertx.io")
 ![deploy](https://github.com/anas-didi95/vertx-budget-server/workflows/deploy/badge.svg)
 ![build](https://github.com/anas-didi95/vertx-budget-server/workflows/build/badge.svg)
 
@@ -24,7 +24,7 @@ Back-end service which provides and handles budget-related resources such as exp
 ---
 
 ## Technologies
-* Vert.x - Version 3.9.3
+* Vert.x - Version 3.9.4
 * Log4j2 - Version 2.13.3
 
 ---
@@ -39,6 +39,9 @@ Following table is a **mandatory** environment variables used in this project.
 | MONGO_PASSWORD | String | Mongo password |
 | MONGO_HOST | String | Mongo host |
 | MONGO_PORT | Number | Mongo port |
+| JWT_SECRET | String | JWT secret key for signature of token |
+| JWT_ISSUER | String | JWT issuer for token validation |
+| JWT_EXPIRE_IN_MINUTES | Number | JWT token expiration period (in minutes) |
 
 Following table is a **optional** environment variables used in this project.
 | Variable Name | Datatype | Description | Default Value |
