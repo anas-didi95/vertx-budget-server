@@ -15,7 +15,9 @@ import io.vertx.ext.web.handler.graphql.GraphiQLHandlerOptions;
 import io.vertx.ext.web.handler.graphql.VertxDataFetcher;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.EventBus;
+import io.vertx.reactivex.ext.auth.jwt.JWTAuth;
 import io.vertx.reactivex.ext.web.Router;
+import io.vertx.reactivex.ext.web.handler.JWTAuthHandler;
 import io.vertx.reactivex.ext.web.handler.graphql.GraphQLHandler;
 import io.vertx.reactivex.ext.web.handler.graphql.GraphiQLHandler;
 
@@ -23,10 +25,12 @@ public class GraphqlVerticle extends AbstractVerticle {
 
   private static final Logger logger = LogManager.getLogger(GraphqlVerticle.class);
   private final Router mainRouter;
+  private final JWTAuth jwtAuth;
   private final GraphqlDataFetcher dataFetcher;
 
-  public GraphqlVerticle(Router mainRouter, EventBus eventBus) {
+  public GraphqlVerticle(Router mainRouter, EventBus eventBus, JWTAuth jwtAuth) {
     this.mainRouter = mainRouter;
+    this.jwtAuth = jwtAuth;
     this.dataFetcher = new GraphqlDataFetcher(eventBus);
   }
 
@@ -34,6 +38,7 @@ public class GraphqlVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) throws Exception {
     AppConfig appConfig = AppConfig.instance();
     Router router = Router.router(vertx);
+    router.route().handler(JWTAuthHandler.create(jwtAuth));
     router.post("/").handler(GraphQLHandler.create(createGraphQL()));
     mainRouter.mountSubRouter(GraphqlConstants.REQUEST_URI, router);
 

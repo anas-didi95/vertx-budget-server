@@ -15,10 +15,14 @@ import io.vertx.core.Promise;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Log4j2LogDelegateFactory;
+import io.vertx.ext.auth.JWTOptions;
+import io.vertx.ext.auth.PubSecKeyOptions;
+import io.vertx.ext.auth.jwt.JWTAuthOptions;
 import io.vertx.ext.healthchecks.Status;
 import io.vertx.reactivex.config.ConfigRetriever;
 import io.vertx.reactivex.core.AbstractVerticle;
 import io.vertx.reactivex.core.eventbus.EventBus;
+import io.vertx.reactivex.ext.auth.jwt.JWTAuth;
 import io.vertx.reactivex.ext.healthchecks.HealthCheckHandler;
 import io.vertx.reactivex.ext.mongo.MongoClient;
 import io.vertx.reactivex.ext.web.Router;
@@ -59,9 +63,19 @@ public class MainVerticle extends AbstractVerticle {
           routingContext -> routingContext.put("requestId", AppUtils.generateUUID()).next());
       router.get("/ping").handler(setupHealthCheck());
 
+      @SuppressWarnings("deprecation")
+      JWTAuth jwtAuth = JWTAuth.create(vertx, new JWTAuthOptions()//
+          .setJWTOptions(new JWTOptions()//
+              .setExpiresInSeconds(3000)//
+              .setIssuer("issuer"))//
+          .addPubSecKey(new PubSecKeyOptions()//
+              .setAlgorithm("HS256")//
+              .setPublicKey("secret")//
+              .setSymmetric(true)));
+
       EventBus eventBus = vertx.eventBus();
-      vertx.deployVerticle(new GraphqlVerticle(router, eventBus));
-      vertx.deployVerticle(new ExpenseVerticle(router, eventBus, mongoClient));
+      vertx.deployVerticle(new GraphqlVerticle(router, eventBus, jwtAuth));
+      vertx.deployVerticle(new ExpenseVerticle(router, eventBus, jwtAuth, mongoClient));
 
       int port = appConfig.getAppPort();
       String host = appConfig.getAppHost();
