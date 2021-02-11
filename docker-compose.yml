@@ -5,21 +5,18 @@ services:
     build:
       context: .devcontainer
       dockerfile: Dockerfile
-    environment:
-      APP_PORT: 5000
-      APP_HOST: 0.0.0.0
-      LOG_LEVEL: debug
-      MONGO_USERNAME: ${MONGO_USERNAME:?MONGO_USERNAME}
-      MONGO_PASSWORD: ${MONGO_PASSWORD:?MONGO_PASSWORD}
-      MONGO_HOST: ${MONGO_HOST:?MONGO_HOST}
-      MONGO_PORT: ${MONGO_PORT:?MONGO_PORT}
-      GRAPHIQL_ENABLE: ${GRAPHIQL_ENABLE:?GRAPHIQL_ENABLE}
-      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET}
-      JWT_EXPIRE_IN_MINUTES: ${JWT_EXPIRE_IN_MINUTES:?JWT_EXPIRE_IN_MINUTES}
-      JWT_ISSUER: ${JWT_ISSUER:?JWT_ISSUER}
+      args:
+        # Update the VARIANT arg to pick a Java version: 11, 15
+        VARIANT: "11"
+        # Options
+        INSTALL_MAVEN: "false"
+        INSTALL_GRADLE: "false"
+        INSTALL_NODE: "false"
+        NODE_VERSION: "lts/*"
+    command: sleep infinity
+    env_file: .env
     ports:
       - 5000:5000
-    command: sleep infinity
     volumes:
       - ./:/workspace
       - ./m2-docker:/home/vscode/.m2
@@ -32,9 +29,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:?MONGO_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?MONGO_PASSWORD}
-    volumes:
-      - ./mongodump:/mongodump
-      - mongodata:/data/db
 
   mongo-express:
     image: mongo-express:0.54.0
@@ -48,6 +42,3 @@ services:
       ME_CONFIG_MONGODB_PORT: ${MONGO_PORT:?MONGO_PORT}
     depends_on:
       - mongo
-
-volumes:
-  mongodata:

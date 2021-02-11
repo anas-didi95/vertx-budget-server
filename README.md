@@ -25,7 +25,7 @@ Back-end service which provides and handles budget-related resources such as exp
 
 ## Technologies
 * Vert.x - Version 3.9.4
-* Log4j2 - Version 2.13.3
+* Log4j2 - Version 2.14.0
 
 ---
 
@@ -34,23 +34,17 @@ Following table is a **mandatory** environment variables used in this project.
 
 | Variable Name | Datatype | Description |
 | --- | --- | --- |
+| APP_HOST | String | Server host |
 | APP_PORT | Number | Server port |
+| LOG_LEVEL | String | Log level |
 | MONGO_USERNAME | String | Mongo username |
 | MONGO_PASSWORD | String | Mongo password |
 | MONGO_HOST | String | Mongo host |
 | MONGO_PORT | Number | Mongo port |
+| GRAPHIQL_ENABLE | Boolean | Flag to enable GraphiQL |
 | JWT_SECRET | String | JWT secret key for signature of token |
 | JWT_ISSUER | String | JWT issuer for token validation |
 | JWT_EXPIRE_IN_MINUTES | Number | JWT token expiration period (in minutes) |
-
-Following table is a **optional** environment variables used in this project.
-| Variable Name | Datatype | Description | Default Value |
-| --- | --- | --- | --- |
-| APP_HOST | String | Server host | localhost |
-| LOG_LEVEL | String | Log level | error |
-| MONGO_AUTH_SOURCE | String | Mongo database for user's credentials | admin |
-| MONGO_DB_NAME | String | Mongo database name | budget |
-| GRAPHIQL_ENABLE | Boolean | Flag to enable GraphiQL | false |
 
 ---
 

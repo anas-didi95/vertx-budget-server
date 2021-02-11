@@ -1,5 +1,5 @@
-// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
-// https://github.com/microsoft/vscode-dev-containers/tree/v0.134.1/containers/java
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/java
 {
   "name": "Java",
   "dockerComposeFile": "../docker-compose.yml",
@@ -14,11 +14,7 @@
   },
 
   // Add the IDs of extensions you want installed when the container is created.
-  "extensions": [
-    "vscjava.vscode-java-pack",
-    "humao.rest-client",
-    "graphql.vscode-graphql"
-  ],
+  "extensions": ["vscjava.vscode-java-pack"],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
@@ -26,6 +22,6 @@
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "java -version",
 
-  // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
   "remoteUser": "vscode"
 }
