@@ -37,10 +37,7 @@ Following table is a **mandatory** environment variables used in this project.
 | APP_HOST | String | Server host |
 | APP_PORT | Number | Server port |
 | LOG_LEVEL | String | Log level |
-| MONGO_USERNAME | String | Mongo username |
-| MONGO_PASSWORD | String | Mongo password |
-| MONGO_HOST | String | Mongo host |
-| MONGO_PORT | Number | Mongo port |
+| MONGO_CONNECTION_STRING | String | Mongo connection string (refer [doc](https://docs.mongodb.com/manual/reference/connection-string/) for example) |
 | GRAPHIQL_ENABLE | Boolean | Flag to enable GraphiQL |
 | JWT_SECRET | String | JWT secret key for signature of token |
 | JWT_ISSUER | String | JWT issuer for token validation |
