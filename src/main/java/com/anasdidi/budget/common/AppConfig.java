@@ -50,6 +50,10 @@ public class AppConfig {
     return cfg.getString("APP_HOST", "localhost");
   }
 
+  public JsonObject getMongoConfig() {
+    return null;
+  }
+
   public String getMongoUsername() {
     return cfg.getString("MONGO_USERNAME");
   }

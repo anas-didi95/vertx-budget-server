@@ -34,6 +34,7 @@ public class TestMainVerticle {
     testContext.verify(() -> {
       Assertions.assertNotNull(appConfig.getAppPort());
       Assertions.assertNotNull(appConfig.getAppHost());
+      Assertions.assertNotNull(appConfig.getMongoConfig());
       Assertions.assertNotNull(appConfig.getMongoHost());
       Assertions.assertNotNull(appConfig.getMongoPort());
       Assertions.assertNotNull(appConfig.getMongoUsername());
