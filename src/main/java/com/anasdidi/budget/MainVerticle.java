@@ -48,13 +48,7 @@ public class MainVerticle extends AbstractVerticle {
       AppConfig appConfig = AppConfig.create(cfg);
       logger.info("[start] appConfig\n{}", appConfig.toString());
 
-      MongoClient mongoClient = MongoClient.createShared(vertx, new JsonObject()//
-          .put("host", appConfig.getMongoHost())//
-          .put("port", appConfig.getMongoPort())//
-          .put("username", appConfig.getMongoUsername())//
-          .put("password", appConfig.getMongoPassword())//
-          .put("authSource", appConfig.getMongoAuthSource())//
-          .put("db_name", appConfig.getMongoDbName()));
+      MongoClient mongoClient = MongoClient.createShared(vertx, appConfig.getMongoConfig());
 
       Router router = Router.router(vertx);
       router.route().handler(setupCorsHandler());

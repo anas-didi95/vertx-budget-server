@@ -29,6 +29,7 @@ public class AppConfig {
     return new JsonObject()//
         .put("APP_PORT", getAppPort())//
         .put("APP_HOST", getAppHost())//
+        .put("MONGO_CONFIG", getMongoConfig())//
         .put("MONGO_USERNAME", getMongoUsername())//
         .put("MONGO_PASSWORD", getMongoPassword())//
         .put("MONGO_HOST", getMongoHost())//
@@ -51,7 +52,8 @@ public class AppConfig {
   }
 
   public JsonObject getMongoConfig() {
-    return null;
+    return new JsonObject()//
+        .put("connection_string", cfg.getString("MONGO_CONNECTION_STRING"));
   }
 
   public String getMongoUsername() {
