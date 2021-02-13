@@ -35,12 +35,6 @@ public class TestMainVerticle {
       Assertions.assertNotNull(appConfig.getAppPort());
       Assertions.assertNotNull(appConfig.getAppHost());
       Assertions.assertNotNull(appConfig.getMongoConfig());
-      Assertions.assertNotNull(appConfig.getMongoHost());
-      Assertions.assertNotNull(appConfig.getMongoPort());
-      Assertions.assertNotNull(appConfig.getMongoUsername());
-      Assertions.assertNotNull(appConfig.getMongoPassword());
-      Assertions.assertNotNull(appConfig.getMongoAuthSource());
-      Assertions.assertNotNull(appConfig.getMongoDbName());
       Assertions.assertNotNull(appConfig.getGraphiqlEnable());
       Assertions.assertNotNull(appConfig.getJwtSecret());
       Assertions.assertNotNull(appConfig.getJwtIssuer());
@@ -73,13 +67,7 @@ public class TestMainVerticle {
   @Test
   void testMongoConnectionSuccess(Vertx vertx, VertxTestContext testContext) throws Exception {
     AppConfig appConfig = AppConfig.instance();
-    MongoClient mongoClient = MongoClient.createShared(vertx, new JsonObject()//
-        .put("host", appConfig.getMongoHost())//
-        .put("port", appConfig.getMongoPort())//
-        .put("username", appConfig.getMongoUsername())//
-        .put("password", appConfig.getMongoPassword())//
-        .put("authSource", appConfig.getMongoAuthSource())//
-        .put("db_name", appConfig.getMongoDbName()));
+    MongoClient mongoClient = MongoClient.createShared(vertx, appConfig.getMongoConfig());
 
     mongoClient.rxGetCollections().subscribe(resultList -> {
       testContext.verify(() -> {

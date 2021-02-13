@@ -33,13 +33,7 @@ public class TestExpenseVerticle {
 
   private static MongoClient getMongoClient(Vertx vertx) throws Exception {
     AppConfig appConfig = AppConfig.instance();
-    return MongoClient.createShared(vertx, new JsonObject()//
-        .put("host", appConfig.getMongoHost())//
-        .put("port", appConfig.getMongoPort())//
-        .put("username", appConfig.getMongoUsername())//
-        .put("password", appConfig.getMongoPassword())//
-        .put("authSource", appConfig.getMongoAuthSource())//
-        .put("db_name", appConfig.getMongoDbName()));
+    return MongoClient.createShared(vertx, appConfig.getMongoConfig());
   }
 
   @BeforeEach
