@@ -35,5 +35,5 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "version": 0
+  "version": 1
 }
