@@ -42,7 +42,7 @@ public class AppConfig {
   }
 
   public String getAppHost() {
-    return cfg.getString("APP_HOST", "localhost");
+    return cfg.getString("APP_HOST");
   }
 
   public JsonObject getMongoConfig() {
@@ -51,7 +51,7 @@ public class AppConfig {
   }
 
   public boolean getGraphiqlEnable() {
-    return cfg.getBoolean("GRAPHIQL_ENABLE", false);
+    return cfg.getBoolean("GRAPHIQL_ENABLE");
   }
 
   public String getJwtSecret() {
